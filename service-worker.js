@@ -1,4 +1,4 @@
-const CACHE_NAME = 'scalp-tracker-v6';
+const CACHE_NAME = 'scalp-tracker-v7';
 const ASSETS = [
   './',
   './index.html',
