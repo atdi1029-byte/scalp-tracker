@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#12100e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Scalp Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-deep: #12100e;
+            --bg-dark: #1a1815;
+            --bg-card: #221f1a;
+            --bg-card-hover: #2a2620;
+            --border: #3a3530;
+            --border-light: #4a4238;
+            --text: #d4c8b0;
+            --text-dim: #8a7e6a;
+            --text-bright: #f0e6cc;
+            --pumpkin: #d4843e;
+            --pumpkin-glow: #e8a04c;
+            --pumpkin-deep: #b8602a;
+            --green: #4a8a4a;
+            --green-bright: #6aaa5a;
+            --red: #c44b3f;
+            --red-bright: #e05545;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            text-align: center;
+            padding: 24px 0 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            color: var(--pumpkin-glow);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        header .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* ============ STAT CARDS ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+        .stat-card .label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .stat-card .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+        .stat-card .value.pos { color: var(--green-bright); }
+        .stat-card .value.neg { color: var(--red-bright); }
+        .stat-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        /* ============ ENTRY FORM ============ */
+        .entry-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .entry-form h3 {
+            font-size: 0.8rem;
+            color: var(--pumpkin);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-bright);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            padding: 8px 10px;
+        }
+        .form-group textarea {
+            height: 40px;
+            resize: vertical;
+            font-size: 0.75rem;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--pumpkin);
+        }
+        .btn {
+            background: var(--pumpkin-deep);
+            color: var(--text-bright);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .btn:hover { background: var(--pumpkin); }
+        .btn.small {
+            padding: 4px 8px;
+            font-size: 0.65rem;
+        }
+
+        /* ============ TABS ============ */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            color: var(--pumpkin-glow);
+            border-bottom-color: var(--pumpkin);
+        }
+
+        /* ============ CHART ============ */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .chart-container h3 {
+            font-size: 0.75rem;
+            color: var(--pumpkin);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chart-canvas-wrap {
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ============ LOG TABLE ============ */
+        .log-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .log-section h3 {
+            font-size: 0.75rem;
+            color: var(--pumpkin);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        .log-table th {
+            text-align: left;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .log-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .log-table tr:hover {
+            background: var(--bg-card-hover);
+        }
+        .log-table .pnl-pos { color: var(--green-bright); }
+        .log-table .pnl-neg { color: var(--red-bright); }
+        .log-table .note-cell {
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.7rem;
+            padding: 2px 4px;
+        }
+        .delete-btn:hover { color: var(--red-bright); }
+
+        /* ============ AVERAGES TABLE ============ */
+        .avg-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+        .avg-table th {
+            text-align: left;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .avg-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ============ PERIOD TOGGLE ============ */
+        .period-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .period-btn {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            padding: 4px 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .period-btn.active {
+            border-color: var(--pumpkin);
+            color: var(--pumpkin-glow);
+            background: var(--bg-card);
+        }
+
+        /* ============ EXPORT/IMPORT ============ */
+        .data-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        /* ============ EMPTY STATE ============ */
+        .empty {
+            text-align: center;
+            color: var(--text-dim);
+            padding: 40px 20px;
+            font-size: 0.8rem;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-card .value { font-size: 1.1rem; }
+            .form-row { flex-direction: column; }
+            .chart-canvas-wrap { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Scalp Tracker</h1>
+            <div class="subtitle">Daily P&L Journal</div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Today</div>
+                <div class="value" id="stat-today">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">This Week</div>
+                <div class="value" id="stat-week">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">This Month</div>
+                <div class="value" id="stat-month">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">All Time</div>
+                <div class="value" id="stat-total">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Avg / Day</div>
+                <div class="value" id="stat-avg-day">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Avg / Week</div>
+                <div class="value" id="stat-avg-week">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Win Days</div>
+                <div class="value" id="stat-win-days">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Best Day</div>
+                <div class="value" id="stat-best">--</div>
+            </div>
+        </div>
+
+        <!-- Entry Form -->
+        <div class="entry-form">
+            <h3>Log Session</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="entry-date">
+                </div>
+                <div class="form-group">
+                    <label>P&L ($)</label>
+                    <input type="text" id="entry-pnl"
+                           placeholder="-12.50 or 45.00"
+                           inputmode="decimal">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Trades</label>
+                    <input type="number" id="entry-trades"
+                           placeholder="# of trades" inputmode="numeric">
+                </div>
+                <div class="form-group">
+                    <label>Notes (optional)</label>
+                    <textarea id="entry-notes"
+                              placeholder="What worked, what didn't..."></textarea>
+                </div>
+            </div>
+            <div class="form-row" style="justify-content: flex-end;">
+                <button class="btn" onclick="addEntry()">Log It</button>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-container">
+            <h3>Cumulative P&L</h3>
+            <div class="period-toggle">
+                <button class="period-btn active"
+                        data-period="all" onclick="setPeriod('all')">All</button>
+                <button class="period-btn"
+                        data-period="30" onclick="setPeriod('30')">30d</button>
+                <button class="period-btn"
+                        data-period="7" onclick="setPeriod('7')">7d</button>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="cumChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>Daily P&L</h3>
+            <div class="chart-canvas-wrap">
+                <canvas id="dailyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabs: Log / Weekly / Monthly -->
+        <div class="tabs">
+            <div class="tab active" data-tab="log"
+                 onclick="switchTab('log')">Log</div>
+            <div class="tab" data-tab="weekly"
+                 onclick="switchTab('weekly')">Weekly</div>
+            <div class="tab" data-tab="monthly"
+                 onclick="switchTab('monthly')">Monthly</div>
+        </div>
+
+        <!-- Log Tab -->
+        <div class="log-section" id="tab-log">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>P&L</th>
+                        <th>Trades</th>
+                        <th>Note</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="log-body"></tbody>
+            </table>
+            <div class="empty" id="log-empty">
+                No entries yet. Log your first session above.
+            </div>
+        </div>
+
+        <!-- Weekly Tab -->
+        <div class="log-section" id="tab-weekly" style="display:none;">
+            <table class="avg-table">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>P&L</th>
+                        <th>Days</th>
+                        <th>Avg/Day</th>
+                    </tr>
+                </thead>
+                <tbody id="weekly-body"></tbody>
+            </table>
+        </div>
+
+        <!-- Monthly Tab -->
+        <div class="log-section" id="tab-monthly" style="display:none;">
+            <table class="avg-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>P&L</th>
+                        <th>Days</th>
+                        <th>Avg/Day</th>
+                    </tr>
+                </thead>
+                <tbody id="monthly-body"></tbody>
+            </table>
+        </div>
+
+        <!-- Data Actions -->
+        <div class="data-actions">
+            <button class="btn small" onclick="exportData()">Export</button>
+            <button class="btn small" onclick="importData()">Import</button>
+            <button class="btn small" style="background:#3a2520;color:var(--red);"
+                    onclick="clearAll()">Clear All</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script>
+    // ============ DATA ============
+    const LS_KEY = 'scalp_journal_v1';
+
+    function load() {
+        try {
+            return JSON.parse(localStorage.getItem(LS_KEY)) || [];
+        } catch { return []; }
+    }
+    function save(entries) {
+        localStorage.setItem(LS_KEY, JSON.stringify(entries));
+    }
+
+    // ============ ADD ENTRY ============
+    function addEntry() {
+        const dateEl = document.getElementById('entry-date');
+        const pnlEl = document.getElementById('entry-pnl');
+        const tradesEl = document.getElementById('entry-trades');
+        const notesEl = document.getElementById('entry-notes');
+
+        const date = dateEl.value;
+        const pnl = parseFloat(pnlEl.value.replace(/,/g, ''));
+        const trades = parseInt(tradesEl.value) || 0;
+        const notes = notesEl.value.trim();
+
+        if (!date || isNaN(pnl)) return;
+
+        const entries = load();
+        // Replace if same date exists
+        const idx = entries.findIndex(e => e.date === date);
+        const entry = { date, pnl, trades, notes };
+        if (idx >= 0) entries[idx] = entry;
+        else entries.push(entry);
+
+        entries.sort((a, b) => a.date.localeCompare(b.date));
+        save(entries);
+
+        // Reset form
+        pnlEl.value = '';
+        tradesEl.value = '';
+        notesEl.value = '';
+        dateEl.value = todayStr();
+
+        render();
+    }
+
+    function deleteEntry(date) {
+        const entries = load().filter(e => e.date !== date);
+        save(entries);
+        render();
+    }
+
+    // ============ STATS ============
+    function todayStr() {
+        const d = new Date();
+        return d.toISOString().split('T')[0];
+    }
+
+    function getWeekStart(dateStr) {
+        const d = new Date(dateStr + 'T12:00:00');
+        const day = d.getDay();
+        const diff = day === 0 ? 6 : day - 1; // Monday start
+        d.setDate(d.getDate() - diff);
+        return d.toISOString().split('T')[0];
+    }
+
+    function getMonthKey(dateStr) {
+        return dateStr.slice(0, 7); // YYYY-MM
+    }
+
+    function computeStats(entries) {
+        const today = todayStr();
+        const thisWeekStart = getWeekStart(today);
+        const thisMonth = getMonthKey(today);
+
+        const todayEntry = entries.find(e => e.date === today);
+        const weekEntries = entries.filter(e => e.date >= thisWeekStart);
+        const monthEntries = entries.filter(e =>
+            getMonthKey(e.date) === thisMonth);
+
+        const totalPnl = entries.reduce((s, e) => s + e.pnl, 0);
+        const weekPnl = weekEntries.reduce((s, e) => s + e.pnl, 0);
+        const monthPnl = monthEntries.reduce((s, e) => s + e.pnl, 0);
+
+        const winDays = entries.filter(e => e.pnl > 0).length;
+        const totalDays = entries.length;
+        const avgDay = totalDays > 0 ? totalPnl / totalDays : 0;
+
+        // Avg per week: group by week, average
+        const weekMap = {};
+        entries.forEach(e => {
+            const ws = getWeekStart(e.date);
+            if (!weekMap[ws]) weekMap[ws] = 0;
+            weekMap[ws] += e.pnl;
+        });
+        const weeks = Object.values(weekMap);
+        const avgWeek = weeks.length > 0
+            ? weeks.reduce((s, v) => s + v, 0) / weeks.length : 0;
+
+        const best = entries.length > 0
+            ? Math.max(...entries.map(e => e.pnl)) : 0;
+
+        return {
+            today: todayEntry ? todayEntry.pnl : null,
+            week: weekPnl,
+            month: monthPnl,
+            total: totalPnl,
+            avgDay,
+            avgWeek,
+            winRate: totalDays > 0
+                ? Math.round((winDays / totalDays) * 100) : 0,
+            best,
+            totalDays,
+        };
+    }
+
+    // ============ FORMAT ============
+    function fmt(val) {
+        if (val === null || val === undefined) return '--';
+        const sign = val >= 0 ? '+' : '';
+        return sign + '$' + Math.abs(val).toFixed(2);
+    }
+
+    function colorClass(val) {
+        if (val === null || val === undefined) return '';
+        return val >= 0 ? 'pos' : 'neg';
+    }
+
+    // ============ RENDER ============
+    let cumChart = null;
+    let dailyChart = null;
+    let currentPeriod = 'all';
+
+    function setPeriod(p) {
+        currentPeriod = p;
+        document.querySelectorAll('.period-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.period === p);
+        });
+        render();
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.tab === tab);
+        });
+        ['log', 'weekly', 'monthly'].forEach(t => {
+            document.getElementById('tab-' + t).style.display =
+                t === tab ? '' : 'none';
+        });
+    }
+
+    function render() {
+        const entries = load();
+        const stats = computeStats(entries);
+
+        // Stats
+        const setS = (id, val) => {
+            const el = document.getElementById(id);
+            el.textContent = fmt(val);
+            el.className = 'value ' + colorClass(val);
+        };
+        setS('stat-today', stats.today);
+        setS('stat-week', stats.week);
+        setS('stat-month', stats.month);
+        setS('stat-total', stats.total);
+        setS('stat-avg-day', stats.avgDay);
+        setS('stat-avg-week', stats.avgWeek);
+        setS('stat-best', stats.best);
+
+        const winEl = document.getElementById('stat-win-days');
+        winEl.textContent = stats.totalDays > 0
+            ? stats.winRate + '%' : '--';
+        winEl.className = 'value ' +
+            (stats.winRate >= 50 ? 'pos' : stats.winRate > 0 ? 'neg' : '');
+
+        // Log table
+        renderLog(entries);
+        renderWeekly(entries);
+        renderMonthly(entries);
+        renderCharts(entries);
+    }
+
+    function renderLog(entries) {
+        const body = document.getElementById('log-body');
+        const empty = document.getElementById('log-empty');
+
+        if (entries.length === 0) {
+            body.innerHTML = '';
+            empty.style.display = '';
+            return;
+        }
+        empty.style.display = 'none';
+
+        // Show newest first
+        const sorted = [...entries].reverse();
+        body.innerHTML = sorted.map(e => {
+            const cls = e.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+            const dateDisplay = new Date(e.date + 'T12:00:00')
+                .toLocaleDateString('en-US',
+                    { month: 'short', day: 'numeric' });
+            return `<tr>
+                <td>${dateDisplay}</td>
+                <td class="${cls}">${fmt(e.pnl)}</td>
+                <td>${e.trades || '-'}</td>
+                <td class="note-cell" title="${(e.notes||'').replace(/"/g,'&quot;')}">${e.notes || ''}</td>
+                <td><button class="delete-btn" onclick="deleteEntry('${e.date}')">x</button></td>
+            </tr>`;
+        }).join('');
+    }
+
+    function renderWeekly(entries) {
+        const weekMap = {};
+        entries.forEach(e => {
+            const ws = getWeekStart(e.date);
+            if (!weekMap[ws]) weekMap[ws] = { pnl: 0, days: 0 };
+            weekMap[ws].pnl += e.pnl;
+            weekMap[ws].days++;
+        });
+
+        const weeks = Object.entries(weekMap)
+            .sort((a, b) => b[0].localeCompare(a[0]));
+
+        document.getElementById('weekly-body').innerHTML =
+            weeks.map(([ws, d]) => {
+                const cls = d.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+                const label = new Date(ws + 'T12:00:00')
+                    .toLocaleDateString('en-US',
+                        { month: 'short', day: 'numeric' });
+                const avg = d.pnl / d.days;
+                return `<tr>
+                    <td>${label}</td>
+                    <td class="${cls}">${fmt(d.pnl)}</td>
+                    <td>${d.days}</td>
+                    <td class="${colorClass(avg)}">${fmt(avg)}</td>
+                </tr>`;
+            }).join('');
+    }
+
+    function renderMonthly(entries) {
+        const monthMap = {};
+        entries.forEach(e => {
+            const mk = getMonthKey(e.date);
+            if (!monthMap[mk]) monthMap[mk] = { pnl: 0, days: 0 };
+            monthMap[mk].pnl += e.pnl;
+            monthMap[mk].days++;
+        });
+
+        const months = Object.entries(monthMap)
+            .sort((a, b) => b[0].localeCompare(a[0]));
+
+        document.getElementById('monthly-body').innerHTML =
+            months.map(([mk, d]) => {
+                const cls = d.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+                const [y, m] = mk.split('-');
+                const label = new Date(+y, +m - 1)
+                    .toLocaleDateString('en-US',
+                        { month: 'long', year: 'numeric' });
+                const avg = d.pnl / d.days;
+                return `<tr>
+                    <td>${label}</td>
+                    <td class="${cls}">${fmt(d.pnl)}</td>
+                    <td>${d.days}</td>
+                    <td class="${colorClass(avg)}">${fmt(avg)}</td>
+                </tr>`;
+            }).join('');
+    }
+
+    // ============ CHARTS ============
+    function filterByPeriod(entries) {
+        if (currentPeriod === 'all') return entries;
+        const days = parseInt(currentPeriod);
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        const cutStr = cutoff.toISOString().split('T')[0];
+        return entries.filter(e => e.date >= cutStr);
+    }
+
+    function renderCharts(entries) {
+        const filtered = filterByPeriod(entries);
+
+        // Cumulative chart
+        const cumLabels = filtered.map(e => {
+            const d = new Date(e.date + 'T12:00:00');
+            return d.toLocaleDateString('en-US',
+                { month: 'short', day: 'numeric' });
+        });
+        let cum = 0;
+        const cumData = filtered.map(e => {
+            cum += e.pnl;
+            return parseFloat(cum.toFixed(2));
+        });
+
+        const cumCtx = document.getElementById('cumChart');
+        if (cumChart) cumChart.destroy();
+        cumChart = new Chart(cumCtx, {
+            type: 'line',
+            data: {
+                labels: cumLabels,
+                datasets: [{
+                    data: cumData,
+                    borderColor: '#e8a04c',
+                    backgroundColor: 'rgba(232,160,76,0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: filtered.length > 30 ? 0 : 3,
+                    pointBackgroundColor: '#e8a04c',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => fmt(ctx.parsed.y)
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#8a7e6a',
+                            font: { family: 'Space Mono', size: 9 },
+                            maxTicksLimit: 8,
+                        },
+                        grid: { color: 'rgba(58,53,48,0.5)' },
+                    },
+                    y: {
+                        ticks: {
+                            color: '#8a7e6a',
+                            font: { family: 'Space Mono', size: 9 },
+                            callback: v => '$' + v,
+                        },
+                        grid: { color: 'rgba(58,53,48,0.5)' },
+                    }
+                }
+            }
+        });
+
+        // Daily bar chart
+        const dailyLabels = filtered.map(e => {
+            const d = new Date(e.date + 'T12:00:00');
+            return d.toLocaleDateString('en-US',
+                { month: 'short', day: 'numeric' });
+        });
+        const dailyData = filtered.map(e => e.pnl);
+        const dailyColors = filtered.map(e =>
+            e.pnl >= 0 ? 'rgba(106,170,90,0.8)' : 'rgba(224,85,69,0.8)');
+
+        const dailyCtx = document.getElementById('dailyChart');
+        if (dailyChart) dailyChart.destroy();
+        dailyChart = new Chart(dailyCtx, {
+            type: 'bar',
+            data: {
+                labels: dailyLabels,
+                datasets: [{
+                    data: dailyData,
+                    backgroundColor: dailyColors,
+                    borderRadius: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => fmt(ctx.parsed.y)
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#8a7e6a',
+                            font: { family: 'Space Mono', size: 9 },
+                            maxTicksLimit: 8,
+                        },
+                        grid: { display: false },
+                    },
+                    y: {
+                        ticks: {
+                            color: '#8a7e6a',
+                            font: { family: 'Space Mono', size: 9 },
+                            callback: v => '$' + v,
+                        },
+                        grid: { color: 'rgba(58,53,48,0.5)' },
+                    }
+                }
+            }
+        });
+    }
+
+    // ============ EXPORT / IMPORT ============
+    function exportData() {
+        const entries = load();
+        const blob = new Blob(
+            [JSON.stringify(entries, null, 2)],
+            { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'scalp-journal-' + todayStr() + '.json';
+        a.click();
+    }
+
+    function importData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (Array.isArray(data)) {
+                        save(data.sort((a,b) =>
+                            a.date.localeCompare(b.date)));
+                        render();
+                    }
+                } catch { alert('Invalid JSON file'); }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    function clearAll() {
+        if (!confirm('Delete all entries? This cannot be undone.'))
+            return;
+        save([]);
+        render();
+    }
+
+    // ============ INIT ============
+    document.getElementById('entry-date').value = todayStr();
+    render();
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js');
+    }
+    </script>
+</body>
+</html>
