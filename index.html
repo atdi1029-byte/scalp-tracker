@@ -572,7 +572,6 @@
     }
     window._scalp_cb = function(data) {
         if (data && data.status === 'ok' && Array.isArray(data.entries)) {
-            // Merge: sheet wins for conflicts, keep local-only entries
             const local = load();
             const merged = [...data.entries];
             const sheetDates = new Set(data.entries.map(e => e.date));
@@ -582,6 +581,17 @@
             merged.sort((a, b) => a.date.localeCompare(b.date));
             save(merged);
             render();
+
+            // If sheet was empty but we have local data, push it all up
+            if (data.entries.length === 0 && merged.length > 0) {
+                const encoded = encodeURIComponent(JSON.stringify(merged));
+                fireGet(SYNC_URL + '?action=scalp_save&data=' + encoded);
+            }
+            // If we added local-only entries to the merge, push full set
+            if (merged.length > data.entries.length) {
+                const encoded = encodeURIComponent(JSON.stringify(merged));
+                fireGet(SYNC_URL + '?action=scalp_save&data=' + encoded);
+            }
         }
     };
 
