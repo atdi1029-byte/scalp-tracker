@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#12100e">
+    <meta name="theme-color" content="#0d2a2a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
@@ -16,22 +16,24 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-deep: #12100e;
-            --bg-dark: #1a1815;
-            --bg-card: #221f1a;
-            --bg-card-hover: #2a2620;
-            --border: #3a3530;
-            --border-light: #4a4238;
-            --text: #d4c8b0;
-            --text-dim: #8a7e6a;
-            --text-bright: #f0e6cc;
-            --pumpkin: #d4843e;
-            --pumpkin-glow: #e8a04c;
-            --pumpkin-deep: #b8602a;
-            --green: #4a8a4a;
-            --green-bright: #6aaa5a;
-            --red: #c44b3f;
-            --red-bright: #e05545;
+            --bg-deep: #0d2a2a;
+            --bg-dark: #0a2020;
+            --bg-card: rgba(12, 40, 38, 0.85);
+            --bg-card-hover: rgba(18, 55, 50, 0.9);
+            --border: rgba(218, 175, 60, 0.25);
+            --border-light: rgba(218, 175, 60, 0.35);
+            --text: #e8dcc0;
+            --text-dim: #a09070;
+            --text-bright: #fff8e0;
+            --gold: #daaf3c;
+            --gold-glow: #f0c850;
+            --gold-deep: #b8862a;
+            --green: #50b050;
+            --green-bright: #70d860;
+            --red: #d44040;
+            --red-bright: #ff5555;
+            --teal: #1a6060;
+            --teal-bright: #28a0a0;
         }
 
         body {
@@ -40,12 +42,30 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-image {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: url('bg.webp') center center / cover no-repeat;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px 16px;
+            position: relative;
+            z-index: 1;
         }
 
         /* ============ HEADER ============ */
@@ -57,7 +77,7 @@
         }
         header h1 {
             font-size: 1.6rem;
-            color: var(--pumpkin-glow);
+            color: var(--gold-glow);
             letter-spacing: 2px;
             text-transform: uppercase;
         }
@@ -80,6 +100,8 @@
             border-radius: 8px;
             padding: 14px 12px;
             text-align: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .stat-card .label {
             font-size: 0.65rem;
@@ -106,10 +128,12 @@
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .entry-form h3 {
             font-size: 0.8rem;
-            color: var(--pumpkin);
+            color: var(--gold);
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -147,10 +171,10 @@
         }
         .form-group input:focus, .form-group textarea:focus {
             outline: none;
-            border-color: var(--pumpkin);
+            border-color: var(--gold);
         }
         .btn {
-            background: var(--pumpkin-deep);
+            background: var(--gold-deep);
             color: var(--text-bright);
             border: none;
             border-radius: 4px;
@@ -163,7 +187,7 @@
             letter-spacing: 1px;
             white-space: nowrap;
         }
-        .btn:hover { background: var(--pumpkin); }
+        .btn:hover { background: var(--gold); }
         .btn.small {
             padding: 4px 8px;
             font-size: 0.65rem;
@@ -189,7 +213,7 @@
             transition: all 0.2s;
         }
         .tab.active {
-            color: var(--pumpkin-glow);
+            color: var(--gold-glow);
             border-bottom-color: var(--pumpkin);
         }
 
@@ -200,10 +224,12 @@
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .chart-container h3 {
             font-size: 0.75rem;
-            color: var(--pumpkin);
+            color: var(--gold);
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -225,10 +251,12 @@
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .log-section h3 {
             font-size: 0.75rem;
-            color: var(--pumpkin);
+            color: var(--gold);
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -313,8 +341,8 @@
             text-transform: uppercase;
         }
         .period-btn.active {
-            border-color: var(--pumpkin);
-            color: var(--pumpkin-glow);
+            border-color: var(--gold);
+            color: var(--gold-glow);
             background: var(--bg-card);
         }
 
@@ -344,6 +372,7 @@
     </style>
 </head>
 <body>
+    <div class="bg-image"></div>
     <div class="container">
         <header>
             <h1>Scalp Tracker</h1>
@@ -504,7 +533,7 @@
         <div class="data-actions">
             <button class="btn small" onclick="exportData()">Export</button>
             <button class="btn small" onclick="importData()">Import</button>
-            <button class="btn small" style="background:#3a2520;color:var(--red);"
+            <button class="btn small" style="background:#2a1515;color:var(--red);"
                     onclick="clearAll()">Clear All</button>
         </div>
     </div>
@@ -810,12 +839,12 @@
                 labels: cumLabels,
                 datasets: [{
                     data: cumData,
-                    borderColor: '#e8a04c',
-                    backgroundColor: 'rgba(232,160,76,0.1)',
+                    borderColor: '#f0c850',
+                    backgroundColor: 'rgba(240,200,80,0.15)',
                     fill: true,
                     tension: 0.3,
                     pointRadius: filtered.length > 30 ? 0 : 3,
-                    pointBackgroundColor: '#e8a04c',
+                    pointBackgroundColor: '#f0c850',
                     borderWidth: 2,
                 }]
             },
@@ -833,19 +862,19 @@
                 scales: {
                     x: {
                         ticks: {
-                            color: '#8a7e6a',
+                            color: '#a09070',
                             font: { family: 'Space Mono', size: 9 },
                             maxTicksLimit: 8,
                         },
-                        grid: { color: 'rgba(58,53,48,0.5)' },
+                        grid: { color: 'rgba(218,175,60,0.12)' },
                     },
                     y: {
                         ticks: {
-                            color: '#8a7e6a',
+                            color: '#a09070',
                             font: { family: 'Space Mono', size: 9 },
                             callback: v => '$' + v,
                         },
-                        grid: { color: 'rgba(58,53,48,0.5)' },
+                        grid: { color: 'rgba(218,175,60,0.12)' },
                     }
                 }
             }
@@ -859,7 +888,7 @@
         });
         const dailyData = filtered.map(e => e.pnl);
         const dailyColors = filtered.map(e =>
-            e.pnl >= 0 ? 'rgba(106,170,90,0.8)' : 'rgba(224,85,69,0.8)');
+            e.pnl >= 0 ? 'rgba(112,216,96,0.8)' : 'rgba(255,85,85,0.8)');
 
         const dailyCtx = document.getElementById('dailyChart');
         if (dailyChart) dailyChart.destroy();
@@ -887,7 +916,7 @@
                 scales: {
                     x: {
                         ticks: {
-                            color: '#8a7e6a',
+                            color: '#a09070',
                             font: { family: 'Space Mono', size: 9 },
                             maxTicksLimit: 8,
                         },
@@ -895,11 +924,11 @@
                     },
                     y: {
                         ticks: {
-                            color: '#8a7e6a',
+                            color: '#a09070',
                             font: { family: 'Space Mono', size: 9 },
                             callback: v => '$' + v,
                         },
-                        grid: { color: 'rgba(58,53,48,0.5)' },
+                        grid: { color: 'rgba(218,175,60,0.12)' },
                     }
                 }
             }

@@ -1,7 +1,8 @@
-const CACHE_NAME = 'scalp-tracker-v1';
+const CACHE_NAME = 'scalp-tracker-v2';
 const ASSETS = [
   './',
   './index.html',
+  './bg.webp',
   './icon-192.png',
   './icon-512.png',
   './manifest.json',
