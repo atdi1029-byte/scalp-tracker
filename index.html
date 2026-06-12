@@ -540,6 +540,7 @@
     <script>
     // ============ DATA ============
     const LS_KEY = 'scalp_journal_v1';
+    const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwt438APu4JrCCJH2x0nYFLRkVfxRnFHNsxVFcOWRqXfVf43jkMwJY-0nB2p8zHZrwvMQ/exec';
 
     function load() {
         try {
@@ -548,6 +549,51 @@
     }
     function save(entries) {
         localStorage.setItem(LS_KEY, JSON.stringify(entries));
+    }
+
+    // Fire-and-forget GET (bypasses CORS on mobile)
+    function fireGet(url) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = resolve;
+            img.onerror = resolve;
+            setTimeout(resolve, 5000);
+            img.src = url;
+        });
+    }
+
+    // Sync: pull from sheet on load
+    function syncFromSheet() {
+        const script = document.createElement('script');
+        script.src = SYNC_URL + '?action=scalp_get&callback=_scalp_cb&_=' + Date.now();
+        document.head.appendChild(script);
+        script.onload = () => script.remove();
+        script.onerror = () => script.remove();
+    }
+    window._scalp_cb = function(data) {
+        if (data && data.status === 'ok' && Array.isArray(data.entries)) {
+            // Merge: sheet wins for conflicts, keep local-only entries
+            const local = load();
+            const merged = [...data.entries];
+            const sheetDates = new Set(data.entries.map(e => e.date));
+            local.forEach(e => {
+                if (!sheetDates.has(e.date)) merged.push(e);
+            });
+            merged.sort((a, b) => a.date.localeCompare(b.date));
+            save(merged);
+            render();
+        }
+    };
+
+    // Sync: push single entry to sheet
+    function syncAdd(entry) {
+        const encoded = encodeURIComponent(JSON.stringify(entry));
+        fireGet(SYNC_URL + '?action=scalp_add&data=' + encoded);
+    }
+
+    // Sync: push delete to sheet
+    function syncDelete(date) {
+        fireGet(SYNC_URL + '?action=scalp_delete&date=' + encodeURIComponent(date));
     }
 
     // ============ ADD ENTRY ============
@@ -565,7 +611,6 @@
         if (!date || isNaN(pnl)) return;
 
         const entries = load();
-        // Replace if same date exists
         const idx = entries.findIndex(e => e.date === date);
         const entry = { date, pnl, trades, notes };
         if (idx >= 0) entries[idx] = entry;
@@ -573,6 +618,7 @@
 
         entries.sort((a, b) => a.date.localeCompare(b.date));
         save(entries);
+        syncAdd(entry);
 
         // Reset form
         pnlEl.value = '';
@@ -586,6 +632,7 @@
     function deleteEntry(date) {
         const entries = load().filter(e => e.date !== date);
         save(entries);
+        syncDelete(date);
         render();
     }
 
@@ -972,12 +1019,14 @@
         if (!confirm('Delete all entries? This cannot be undone.'))
             return;
         save([]);
+        fireGet(SYNC_URL + '?action=scalp_save&data=' + encodeURIComponent('[]'));
         render();
     }
 
     // ============ INIT ============
     document.getElementById('entry-date').value = todayStr();
     render();
+    syncFromSheet();
 
     // Register service worker
     if ('serviceWorker' in navigator) {
