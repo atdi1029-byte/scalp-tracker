@@ -1,4 +1,4 @@
-const CACHE_NAME = 'scalp-tracker-v5';
+const CACHE_NAME = 'scalp-tracker-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -6,7 +6,7 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js'
 ];
 
@@ -28,18 +28,17 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch — cache first, fallback to network
+// Fetch — network first, fallback to cache
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request).then(response => {
-        if (response.ok && event.request.method === 'GET') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache =>
-            cache.put(event.request, clone));
-        }
-        return response;
-      })
-    ).catch(() => caches.match('./index.html'))
+    fetch(event.request).then(response => {
+      if (response.ok && event.request.method === 'GET') {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache =>
+          cache.put(event.request, clone));
+      }
+      return response;
+    }).catch(() => caches.match(event.request)
+      .then(cached => cached || caches.match('./index.html')))
   );
 });
