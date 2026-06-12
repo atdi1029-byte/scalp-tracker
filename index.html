@@ -364,7 +364,10 @@
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .stat-card .value { font-size: 1.1rem; }
-            .form-row { flex-direction: column; }
+            .form-row { flex-direction: column; gap: 8px; }
+            .form-row:last-child { justify-content: center; }
+            .entry-form h3 { text-align: center; }
+            .btn { width: 100%; }
             .chart-canvas-wrap { height: 200px; }
         }
     </style>
