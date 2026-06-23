@@ -579,12 +579,19 @@
             <h3>SL / TP Settings —
               <span id="config-asset-name">NAS100</span></h3>
             <div class="config-row">
-                <span class="c-label">Capital</span>
-                <span class="c-result">$50</span>
+                <span class="c-label">Base</span>
+                <span class="c-result"
+                  id="cfg-base">$50</span>
+            </div>
+            <div class="config-row">
+                <span class="c-label">Current</span>
+                <span class="c-result pos"
+                  id="cfg-current">$50.00</span>
             </div>
             <div class="config-row">
                 <span class="c-label">Leverage</span>
-                <span class="c-result">5x → $250 position</span>
+                <span class="c-result"
+                  id="cfg-leverage">5x → $250 position</span>
             </div>
             <div class="config-row">
                 <span class="c-label">Stop Loss</span>
@@ -878,7 +885,15 @@
     let cumChart = null;
     let dailyChart = null;
 
-    // ============ KELLY CRITERION ============
+    // ============ CAPITAL & KELLY ============
+    // Current capital = base + cumulative P&L
+    function getCurrentCapital(asset, trades) {
+        const pnl = trades
+            .filter(t => t.asset === asset.name)
+            .reduce((s, t) => s + t.pnl, 0);
+        return Math.max(0, asset.capital + pnl);
+    }
+
     function calcKelly(trades) {
         if (trades.length < 5) return null;
         const wins = trades.filter(t => t.pnl > 0);
@@ -897,8 +912,38 @@
         // Kelly % = W - (1-W)/R
         const kelly = winRate
             - (1 - winRate) / wlRatio;
+        // Cap at 100%, floor at 0%
         return Math.max(0,
             Math.min(kelly * 100, 100));
+    }
+
+    // Kelly-sized position:
+    // currentCapital * (kelly/100) * leverage
+    // Before 5 trades, use full capital
+    function getKellyPosition(asset, trades) {
+        const at = trades.filter(
+            t => t.asset === asset.name);
+        const cap = getCurrentCapital(asset, trades);
+        const kelly = calcKelly(at);
+        if (kelly === null) {
+            // Not enough data, use full capital
+            return {
+                capital: cap,
+                kelly: null,
+                riskCapital: cap,
+                position: cap * asset.leverage,
+            };
+        }
+        // Half-Kelly for safety
+        const halfKelly = kelly / 2;
+        const riskCap = cap * (halfKelly / 100);
+        return {
+            capital: cap,
+            kelly: kelly,
+            halfKelly: halfKelly,
+            riskCapital: riskCap,
+            position: riskCap * asset.leverage,
+        };
     }
 
     // ============ FORMAT ============
@@ -1028,7 +1073,9 @@
         asset.tp = tp;
         saveAssets(assets);
 
-        const pos = asset.capital * asset.leverage;
+        const trades = loadTrades();
+        const kp = getKellyPosition(asset, trades);
+        const pos = kp.position;
         const slDollar = pos * (sl / 100);
         const tpDollar = pos * (tp / 100);
         const rr = tp / sl;
@@ -1116,14 +1163,18 @@
             const wr = at.length > 0
                 ? Math.round(
                     (wins / at.length) * 100) : 0;
-            const kelly = calcKelly(at);
-            const pos = asset.capital
-                * asset.leverage;
+            const kp = getKellyPosition(
+                asset, trades);
+            const kelly = kp.kelly;
             const roi = asset.capital > 0
                 ? ((pnl / asset.capital) * 100)
                     .toFixed(1) : 0;
             const active = asset.name === selectedAsset
                 ? 'active' : '';
+            const posLabel = kelly !== null
+                ? '$' + kp.position.toFixed(2)
+                : '$' + (kp.capital
+                    * asset.leverage).toFixed(2);
 
             return `
             <div class="asset-card ${active}"
@@ -1136,9 +1187,14 @@
                 </div>
                 <div class="asset-meta">
                     <div class="am-item">
-                        <div class="am-label">Trades</div>
+                        <div class="am-label">Capital</div>
+                        <div class="am-value ${pnlClass(pnl)}">
+                            $${kp.capital.toFixed(2)}</div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">Position</div>
                         <div class="am-value">
-                            ${at.length}</div>
+                            ${posLabel}</div>
                     </div>
                     <div class="am-item">
                         <div class="am-label">Win Rate</div>
@@ -1154,6 +1210,14 @@
                                 ? roi + '%' : '--'}
                         </div>
                     </div>
+                </div>
+                <div class="asset-meta"
+                  style="margin-top:6px;">
+                    <div class="am-item">
+                        <div class="am-label">Trades</div>
+                        <div class="am-value">
+                            ${at.length}</div>
+                    </div>
                     <div class="am-item">
                         <div class="am-label">Kelly</div>
                         <div class="am-value">
@@ -1162,6 +1226,25 @@
                                     + kelly.toFixed(1)
                                     + '%</span>'
                                 : '<span style="color:var(--text-dim);font-size:0.6rem;">5+ trades</span>'}
+                        </div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">½ Kelly</div>
+                        <div class="am-value">
+                            ${kp.halfKelly != null
+                                ? '<span class="kelly-badge">'
+                                    + kp.halfKelly.toFixed(1)
+                                    + '%</span>'
+                                : '--'}
+                        </div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">Risk $</div>
+                        <div class="am-value">
+                            ${kelly !== null
+                                ? '$' + kp.riskCapital
+                                    .toFixed(2)
+                                : '--'}
                         </div>
                     </div>
                 </div>
@@ -1173,15 +1256,33 @@
         const asset = assets.find(
             a => a.name === selectedAsset);
         if (!asset) return;
+        const trades = loadTrades();
+        const kp = getKellyPosition(asset, trades);
 
         document.getElementById('config-asset-name')
             .textContent = asset.name;
+        document.getElementById('cfg-base')
+            .textContent = '$' + asset.capital;
+        document.getElementById('cfg-current')
+            .textContent = '$'
+            + kp.capital.toFixed(2);
+        document.getElementById('cfg-current')
+            .className = 'c-result '
+            + colorClass(
+                kp.capital - asset.capital);
+        document.getElementById('cfg-leverage')
+            .textContent = asset.leverage
+            + 'x → $'
+            + kp.position.toFixed(2)
+            + ' position'
+            + (kp.kelly !== null
+                ? ' (½K)' : '');
         document.getElementById('cfg-sl')
             .value = asset.sl.toFixed(2);
         document.getElementById('cfg-tp')
             .value = asset.tp.toFixed(2);
 
-        const pos = asset.capital * asset.leverage;
+        const pos = kp.position;
         const slD = pos * (asset.sl / 100);
         const tpD = pos * (asset.tp / 100);
         const rr = asset.tp / asset.sl;
