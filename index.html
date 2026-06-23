@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a1510">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <title>Scalp Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -47,15 +51,11 @@
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            background: url('bg.webp') center center / cover no-repeat;
+            background: url('bg.webp') center center
+              / cover no-repeat;
             opacity: 0.45;
             pointer-events: none;
             z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
         }
 
         .container {
@@ -85,38 +85,112 @@
             margin-top: 4px;
         }
 
-        /* ============ STAT CARDS ============ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .stat-card {
+        /* ============ OVERALL STATS ============ */
+        .overall-banner {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 14px 12px;
-            text-align: center;
+            padding: 16px;
+            margin-bottom: 20px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        .stat-card .label {
-            font-size: 0.65rem;
+        .overall-banner h3 {
+            font-size: 0.7rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .overall-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .overall-grid .o-item {
+            text-align: center;
+        }
+        .overall-grid .o-label {
+            font-size: 0.55rem;
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 6px;
         }
-        .stat-card .value {
-            font-size: 1.3rem;
+        .overall-grid .o-value {
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-bright);
+            margin-top: 2px;
         }
-        .stat-card .value.pos { color: var(--green-bright); }
-        .stat-card .value.neg { color: var(--red-bright); }
-        .stat-card.wide {
-            grid-column: 1 / -1;
+        .overall-grid .o-value.pos {
+            color: var(--green-bright);
+        }
+        .overall-grid .o-value.neg {
+            color: var(--red-bright);
+        }
+
+        /* ============ ASSET CARDS ============ */
+        .asset-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .asset-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .asset-card.active {
+            border-color: var(--gold);
+        }
+        .asset-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .asset-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold-glow);
+        }
+        .asset-pnl {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .asset-meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .asset-meta .am-item {
+            text-align: center;
+        }
+        .asset-meta .am-label {
+            font-size: 0.5rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .asset-meta .am-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .kelly-badge {
+            display: inline-block;
+            background: rgba(218, 175, 60, 0.15);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            color: var(--gold-glow);
         }
 
         /* ============ ENTRY FORM ============ */
@@ -152,7 +226,9 @@
             margin-bottom: 4px;
             text-transform: uppercase;
         }
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             background: var(--bg-dark);
             border: 1px solid var(--border);
@@ -162,12 +238,22 @@
             font-size: 0.9rem;
             padding: 8px 10px;
         }
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a09070' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+        }
         .form-group textarea {
             height: 40px;
             resize: vertical;
             font-size: 0.75rem;
         }
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--gold);
         }
@@ -190,29 +276,14 @@
             padding: 4px 8px;
             font-size: 0.65rem;
         }
-
-        /* ============ TABS ============ */
-        .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            font-size: 0.7rem;
+        .btn.outline {
+            background: transparent;
+            border: 1px solid var(--border);
             color: var(--text-dim);
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
         }
-        .tab.active {
+        .btn.outline:hover {
+            border-color: var(--gold);
             color: var(--gold-glow);
-            border-bottom-color: var(--pumpkin);
         }
 
         /* ============ CHART ============ */
@@ -240,6 +311,29 @@
         canvas {
             width: 100% !important;
             height: 100% !important;
+        }
+
+        /* ============ PERIOD TOGGLE ============ */
+        .period-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .period-btn {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.6rem;
+            padding: 4px 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .period-btn.active {
+            border-color: var(--gold);
+            color: var(--gold-glow);
+            background: var(--bg-card);
         }
 
         /* ============ LOG TABLE ============ */
@@ -281,12 +375,12 @@
         .log-table tr:hover {
             background: var(--bg-card-hover);
         }
-        .log-table .pnl-pos { color: var(--green-bright); }
-        .log-table .pnl-neg { color: var(--red-bright); }
+        .pnl-pos { color: var(--green-bright); }
+        .pnl-neg { color: var(--red-bright); }
         .log-table .note-cell {
             color: var(--text-dim);
             font-size: 0.65rem;
-            max-width: 160px;
+            max-width: 120px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -299,49 +393,109 @@
             font-size: 0.7rem;
             padding: 2px 4px;
         }
-        .delete-btn:hover { color: var(--red-bright); }
-
-        /* ============ AVERAGES TABLE ============ */
-        .avg-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
-            margin-top: 8px;
+        .delete-btn:hover {
+            color: var(--red-bright);
         }
-        .avg-table th {
-            text-align: left;
-            color: var(--text-dim);
+        .asset-tag {
+            display: inline-block;
+            background: rgba(218, 175, 60, 0.12);
+            border-radius: 3px;
+            padding: 1px 5px;
             font-size: 0.6rem;
-            text-transform: uppercase;
-            padding: 6px 8px;
-            border-bottom: 1px solid var(--border);
-        }
-        .avg-table td {
-            padding: 8px;
-            border-bottom: 1px solid var(--border);
+            color: var(--gold);
         }
 
-        /* ============ PERIOD TOGGLE ============ */
-        .period-toggle {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
+        /* ============ SL/TP CONFIG ============ */
+        .config-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .period-btn {
+        .config-section h3 {
+            font-size: 0.75rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .config-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+        .config-row .c-label {
+            width: 80px;
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+        }
+        .config-row input {
+            width: 70px;
             background: var(--bg-dark);
             border: 1px solid var(--border);
             border-radius: 4px;
-            color: var(--text-dim);
+            color: var(--text-bright);
             font-family: 'Playfair Display', serif;
-            font-size: 0.6rem;
-            padding: 4px 10px;
-            cursor: pointer;
-            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            text-align: center;
         }
-        .period-btn.active {
+        .config-row input:focus {
+            outline: none;
             border-color: var(--gold);
+        }
+        .config-row .c-result {
+            color: var(--text);
+            font-size: 0.75rem;
+        }
+        .config-row .c-result.neg {
+            color: var(--red-bright);
+        }
+        .config-row .c-result.pos {
+            color: var(--green-bright);
+        }
+
+        /* ============ ADD ASSET MODAL ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 360px;
+        }
+        .modal h3 {
+            font-size: 0.9rem;
             color: var(--gold-glow);
-            background: var(--bg-card);
+            margin-bottom: 16px;
+        }
+        .modal .form-group {
+            margin-bottom: 12px;
+        }
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
         }
 
         /* ============ EXPORT/IMPORT ============ */
@@ -352,7 +506,6 @@
             margin-bottom: 20px;
         }
 
-        /* ============ EMPTY STATE ============ */
         .empty {
             text-align: center;
             color: var(--text-dim);
@@ -362,11 +515,18 @@
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .stat-card .value { font-size: 1.1rem; }
-            .form-row { flex-direction: column; gap: 8px; }
-            .form-row:last-child { justify-content: center; }
-            .entry-form h3 { text-align: center; }
+            .overall-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .asset-meta {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 8px;
+            }
             .btn { width: 100%; }
             .chart-canvas-wrap { height: 200px; }
         }
@@ -377,93 +537,141 @@
     <div class="container">
         <header>
             <h1>Scalp Tracker</h1>
-            <div class="subtitle">Daily P&L Journal</div>
+            <div class="subtitle">Per-Asset Trade Journal</div>
         </header>
 
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="label">Today</div>
-                <div class="value" id="stat-today">--</div>
+        <!-- Overall Profit -->
+        <div class="overall-banner">
+            <h3>Overall Performance</h3>
+            <div class="overall-grid">
+                <div class="o-item">
+                    <div class="o-label">Total P&L</div>
+                    <div class="o-value" id="o-total">--</div>
+                </div>
+                <div class="o-item">
+                    <div class="o-label">Today</div>
+                    <div class="o-value" id="o-today">--</div>
+                </div>
+                <div class="o-item">
+                    <div class="o-label">Win Rate</div>
+                    <div class="o-value" id="o-winrate">--</div>
+                </div>
+                <div class="o-item">
+                    <div class="o-label">Total Trades</div>
+                    <div class="o-value" id="o-trades">--</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="label">This Week</div>
-                <div class="value" id="stat-week">--</div>
+        </div>
+
+        <!-- Asset Cards -->
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:12px;">
+            <h3 style="font-size:0.75rem;color:var(--gold);
+              text-transform:uppercase;letter-spacing:1px;">
+              Assets</h3>
+            <button class="btn small outline"
+              onclick="showAddAsset()">+ Add Asset</button>
+        </div>
+        <div class="asset-cards" id="asset-cards"></div>
+
+        <!-- SL/TP Config -->
+        <div class="config-section" id="sltp-config">
+            <h3>SL / TP Settings —
+              <span id="config-asset-name">NAS100</span></h3>
+            <div class="config-row">
+                <span class="c-label">Capital</span>
+                <span class="c-result">$50</span>
             </div>
-            <div class="stat-card">
-                <div class="label">This Month</div>
-                <div class="value" id="stat-month">--</div>
+            <div class="config-row">
+                <span class="c-label">Leverage</span>
+                <span class="c-result">5x → $250 position</span>
             </div>
-            <div class="stat-card">
-                <div class="label">All Time</div>
-                <div class="value" id="stat-total">--</div>
+            <div class="config-row">
+                <span class="c-label">Stop Loss</span>
+                <input type="text" id="cfg-sl"
+                  value="0.20" inputmode="decimal">
+                <span class="c-result">%</span>
+                <span class="c-result neg"
+                  id="cfg-sl-dollar">= -$0.50</span>
             </div>
-            <div class="stat-card">
-                <div class="label">Avg / Day</div>
-                <div class="value" id="stat-avg-day">--</div>
+            <div class="config-row">
+                <span class="c-label">Take Profit</span>
+                <input type="text" id="cfg-tp"
+                  value="0.40" inputmode="decimal">
+                <span class="c-result">%</span>
+                <span class="c-result pos"
+                  id="cfg-tp-dollar">= +$1.00</span>
             </div>
-            <div class="stat-card">
-                <div class="label">Avg / Week</div>
-                <div class="value" id="stat-avg-week">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Win Days</div>
-                <div class="value" id="stat-win-days">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Best Day</div>
-                <div class="value" id="stat-best">--</div>
+            <div class="config-row">
+                <span class="c-label">R:R Ratio</span>
+                <span class="c-result" id="cfg-rr">1 : 2.0</span>
             </div>
         </div>
 
         <!-- Entry Form -->
         <div class="entry-form">
-            <h3>Log Session</h3>
+            <h3>Log Trade</h3>
             <div class="form-row">
+                <div class="form-group">
+                    <label>Asset</label>
+                    <select id="entry-asset"></select>
+                </div>
                 <div class="form-group">
                     <label>Date</label>
                     <input type="date" id="entry-date">
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label>P&L ($)</label>
                     <input type="text" id="entry-pnl"
-                           placeholder="-12.50 or 45.00"
-                           inputmode="decimal">
+                      placeholder="-0.50 or 1.00"
+                      inputmode="decimal">
+                </div>
+                <div class="form-group">
+                    <label>Result</label>
+                    <select id="entry-result">
+                        <option value="tp">TP Hit</option>
+                        <option value="sl">SL Hit</option>
+                        <option value="manual">Manual Close</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Trades</label>
-                    <input type="number" id="entry-trades"
-                           placeholder="# of trades" inputmode="numeric">
-                </div>
-                <div class="form-group">
                     <label>Notes (optional)</label>
                     <textarea id="entry-notes"
-                              placeholder="What worked, what didn't..."></textarea>
+                      placeholder="Setup, what worked...">
+                    </textarea>
                 </div>
             </div>
-            <div class="form-row" style="justify-content: flex-end;">
-                <button class="btn" onclick="addEntry()">Log It</button>
+            <div class="form-row"
+              style="justify-content: flex-end;">
+                <button class="btn"
+                  onclick="addTrade()">Log It</button>
             </div>
         </div>
 
-        <!-- Charts -->
+        <!-- Cumulative Chart -->
         <div class="chart-container">
             <h3>Cumulative P&L</h3>
             <div class="period-toggle">
                 <button class="period-btn active"
-                        data-period="all" onclick="setPeriod('all')">All</button>
+                  data-period="all"
+                  onclick="setPeriod('all')">All</button>
                 <button class="period-btn"
-                        data-period="30" onclick="setPeriod('30')">30d</button>
+                  data-period="30"
+                  onclick="setPeriod('30')">30d</button>
                 <button class="period-btn"
-                        data-period="7" onclick="setPeriod('7')">7d</button>
+                  data-period="7"
+                  onclick="setPeriod('7')">7d</button>
             </div>
             <div class="chart-canvas-wrap">
                 <canvas id="cumChart"></canvas>
             </div>
         </div>
 
+        <!-- Daily Bar Chart -->
         <div class="chart-container">
             <h3>Daily P&L</h3>
             <div class="chart-canvas-wrap">
@@ -471,24 +679,16 @@
             </div>
         </div>
 
-        <!-- Tabs: Log / Weekly / Monthly -->
-        <div class="tabs">
-            <div class="tab active" data-tab="log"
-                 onclick="switchTab('log')">Log</div>
-            <div class="tab" data-tab="weekly"
-                 onclick="switchTab('weekly')">Weekly</div>
-            <div class="tab" data-tab="monthly"
-                 onclick="switchTab('monthly')">Monthly</div>
-        </div>
-
-        <!-- Log Tab -->
-        <div class="log-section" id="tab-log">
+        <!-- Trade Log -->
+        <div class="log-section">
+            <h3>Trade Log</h3>
             <table class="log-table">
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Asset</th>
                         <th>P&L</th>
-                        <th>Trades</th>
+                        <th>Result</th>
                         <th>Note</th>
                         <th></th>
                     </tr>
@@ -496,65 +696,122 @@
                 <tbody id="log-body"></tbody>
             </table>
             <div class="empty" id="log-empty">
-                No entries yet. Log your first session above.
+                No trades yet. Log your first one above.
             </div>
-        </div>
-
-        <!-- Weekly Tab -->
-        <div class="log-section" id="tab-weekly" style="display:none;">
-            <table class="avg-table">
-                <thead>
-                    <tr>
-                        <th>Week</th>
-                        <th>P&L</th>
-                        <th>Days</th>
-                        <th>Avg/Day</th>
-                    </tr>
-                </thead>
-                <tbody id="weekly-body"></tbody>
-            </table>
-        </div>
-
-        <!-- Monthly Tab -->
-        <div class="log-section" id="tab-monthly" style="display:none;">
-            <table class="avg-table">
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>P&L</th>
-                        <th>Days</th>
-                        <th>Avg/Day</th>
-                    </tr>
-                </thead>
-                <tbody id="monthly-body"></tbody>
-            </table>
         </div>
 
         <!-- Data Actions -->
         <div class="data-actions">
-            <button class="btn small" onclick="exportData()">Export</button>
-            <button class="btn small" onclick="importData()">Import</button>
-            <button class="btn small" style="background:#2a1515;color:var(--red);"
-                    onclick="clearAll()">Clear All</button>
+            <button class="btn small"
+              onclick="exportData()">Export</button>
+            <button class="btn small"
+              onclick="importData()">Import</button>
+            <button class="btn small"
+              style="background:#2a1515;color:var(--red);"
+              onclick="clearAll()">Clear All</button>
+        </div>
+    </div>
+
+    <!-- Add Asset Modal -->
+    <div class="modal-overlay" id="add-asset-modal">
+        <div class="modal">
+            <h3>Add Asset</h3>
+            <div class="form-group">
+                <label>Asset Name</label>
+                <input type="text" id="new-asset-name"
+                  placeholder="e.g. BTC, ETH, SOL">
+            </div>
+            <div class="form-group">
+                <label>Capital ($)</label>
+                <input type="text" id="new-asset-capital"
+                  value="50" inputmode="decimal">
+            </div>
+            <div class="form-group">
+                <label>Leverage</label>
+                <input type="text" id="new-asset-leverage"
+                  value="5" inputmode="numeric">
+            </div>
+            <div class="modal-btns">
+                <button class="btn outline small"
+                  onclick="hideAddAsset()">Cancel</button>
+                <button class="btn small"
+                  onclick="addAsset()">Add</button>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script>
     // ============ DATA ============
-    const LS_KEY = 'scalp_journal_v1';
+    const LS_KEY = 'scalp_v2';
+    const ASSETS_KEY = 'scalp_assets_v2';
+    const CONFIG_KEY = 'scalp_config_v2';
     const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwt438APIycBc534W6T66O3IgtxLUU9cczw-PZAN6Mc9p2xfU2ySsND_wEMJDHUvrXyUg/exec';
 
-    function load() {
+    // Default assets
+    const DEFAULT_ASSETS = [
+        { name: 'NAS100', capital: 50, leverage: 5,
+          sl: 0.20, tp: 0.40 },
+    ];
+
+    function loadTrades() {
         try {
-            return JSON.parse(localStorage.getItem(LS_KEY)) || [];
+            return JSON.parse(
+                localStorage.getItem(LS_KEY)
+            ) || [];
         } catch { return []; }
     }
-    function save(entries) {
-        localStorage.setItem(LS_KEY, JSON.stringify(entries));
+    function saveTrades(trades) {
+        localStorage.setItem(LS_KEY,
+            JSON.stringify(trades));
     }
 
-    // Fire-and-forget GET (bypasses CORS on mobile)
+    function loadAssets() {
+        try {
+            const a = JSON.parse(
+                localStorage.getItem(ASSETS_KEY));
+            return a && a.length > 0 ? a : DEFAULT_ASSETS;
+        } catch { return DEFAULT_ASSETS; }
+    }
+    function saveAssets(assets) {
+        localStorage.setItem(ASSETS_KEY,
+            JSON.stringify(assets));
+    }
+
+    function loadConfig() {
+        try {
+            return JSON.parse(
+                localStorage.getItem(CONFIG_KEY)
+            ) || {};
+        } catch { return {}; }
+    }
+    function saveConfig(cfg) {
+        localStorage.setItem(CONFIG_KEY,
+            JSON.stringify(cfg));
+    }
+
+    // Migrate from v1 if needed
+    function migrateV1() {
+        const old = localStorage.getItem('scalp_journal_v1');
+        if (!old) return;
+        try {
+            const entries = JSON.parse(old);
+            if (!Array.isArray(entries) || entries.length === 0)
+                return;
+            const trades = entries.map(e => ({
+                id: Date.now() + Math.random(),
+                date: e.date,
+                asset: 'NAS100',
+                pnl: e.pnl,
+                result: e.pnl >= 0 ? 'tp' : 'sl',
+                notes: e.notes || '',
+            }));
+            saveTrades(trades);
+            localStorage.removeItem('scalp_journal_v1');
+        } catch {}
+    }
+
+    // Fire-and-forget GET
     function fireGet(url) {
         return new Promise(resolve => {
             const img = new Image();
@@ -565,331 +822,480 @@
         });
     }
 
-    // Sync: pull from sheet on load
+    // Sync to sheet
+    function syncPush() {
+        const trades = loadTrades();
+        const assets = loadAssets();
+        const payload = { trades, assets };
+        const encoded = encodeURIComponent(
+            JSON.stringify(payload));
+        fireGet(SYNC_URL
+            + '?action=scalp_save&data=' + encoded);
+    }
+
     function syncFromSheet() {
         const script = document.createElement('script');
-        script.src = SYNC_URL + '?action=scalp_get&callback=_scalp_cb&_=' + Date.now();
+        script.src = SYNC_URL
+            + '?action=scalp_get&callback=_scalp_cb&_='
+            + Date.now();
         document.head.appendChild(script);
         script.onload = () => script.remove();
         script.onerror = () => script.remove();
     }
-    window._scalp_cb = function(data) {
-        if (data && data.status === 'ok' && Array.isArray(data.entries)) {
-            const local = load();
-            const merged = [...data.entries];
-            const sheetDates = new Set(data.entries.map(e => e.date));
-            local.forEach(e => {
-                if (!sheetDates.has(e.date)) merged.push(e);
-            });
-            merged.sort((a, b) => a.date.localeCompare(b.date));
-            save(merged);
-            render();
 
-            // If sheet was empty but we have local data, push it all up
-            if (data.entries.length === 0 && merged.length > 0) {
-                const encoded = encodeURIComponent(JSON.stringify(merged));
-                fireGet(SYNC_URL + '?action=scalp_save&data=' + encoded);
-            }
-            // If we added local-only entries to the merge, push full set
-            if (merged.length > data.entries.length) {
-                const encoded = encodeURIComponent(JSON.stringify(merged));
-                fireGet(SYNC_URL + '?action=scalp_save&data=' + encoded);
+    window._scalp_cb = function(data) {
+        if (!data || data.status !== 'ok') return;
+        if (data.trades && Array.isArray(data.trades)
+            && data.trades.length > 0) {
+            const local = loadTrades();
+            if (local.length === 0) {
+                saveTrades(data.trades);
+            } else {
+                // Merge by id
+                const ids = new Set(
+                    local.map(t => t.id));
+                const merged = [...local];
+                data.trades.forEach(t => {
+                    if (!ids.has(t.id)) merged.push(t);
+                });
+                merged.sort((a, b) =>
+                    a.date.localeCompare(b.date));
+                saveTrades(merged);
             }
         }
+        if (data.assets && Array.isArray(data.assets)
+            && data.assets.length > 0) {
+            saveAssets(data.assets);
+        }
+        render();
     };
 
-    // Sync: push single entry to sheet
-    function syncAdd(entry) {
-        const encoded = encodeURIComponent(JSON.stringify(entry));
-        fireGet(SYNC_URL + '?action=scalp_add&data=' + encoded);
-    }
+    // ============ STATE ============
+    let selectedAsset = 'NAS100';
+    let currentPeriod = 'all';
+    let cumChart = null;
+    let dailyChart = null;
 
-    // Sync: push delete to sheet
-    function syncDelete(date) {
-        fireGet(SYNC_URL + '?action=scalp_delete&date=' + encodeURIComponent(date));
-    }
+    // ============ KELLY CRITERION ============
+    function calcKelly(trades) {
+        if (trades.length < 5) return null;
+        const wins = trades.filter(t => t.pnl > 0);
+        const losses = trades.filter(t => t.pnl < 0);
+        if (wins.length === 0 || losses.length === 0)
+            return null;
 
-    // ============ ADD ENTRY ============
-    function addEntry() {
-        const dateEl = document.getElementById('entry-date');
-        const pnlEl = document.getElementById('entry-pnl');
-        const tradesEl = document.getElementById('entry-trades');
-        const notesEl = document.getElementById('entry-notes');
+        const winRate = wins.length / trades.length;
+        const avgWin = wins.reduce((s, t) =>
+            s + t.pnl, 0) / wins.length;
+        const avgLoss = Math.abs(
+            losses.reduce((s, t) =>
+                s + t.pnl, 0) / losses.length);
+        const wlRatio = avgWin / avgLoss;
 
-        const date = dateEl.value;
-        const pnl = parseFloat(pnlEl.value.replace(/,/g, ''));
-        const trades = parseInt(tradesEl.value) || 0;
-        const notes = notesEl.value.trim();
-
-        if (!date || isNaN(pnl)) return;
-
-        const entries = load();
-        const idx = entries.findIndex(e => e.date === date);
-        const entry = { date, pnl, trades, notes };
-        if (idx >= 0) entries[idx] = entry;
-        else entries.push(entry);
-
-        entries.sort((a, b) => a.date.localeCompare(b.date));
-        save(entries);
-        syncAdd(entry);
-
-        // Reset form
-        pnlEl.value = '';
-        tradesEl.value = '';
-        notesEl.value = '';
-        dateEl.value = todayStr();
-
-        render();
-    }
-
-    function deleteEntry(date) {
-        const entries = load().filter(e => e.date !== date);
-        save(entries);
-        syncDelete(date);
-        render();
-    }
-
-    // ============ STATS ============
-    function todayStr() {
-        const d = new Date();
-        return d.toISOString().split('T')[0];
-    }
-
-    function getWeekStart(dateStr) {
-        const d = new Date(dateStr + 'T12:00:00');
-        const day = d.getDay();
-        const diff = day === 0 ? 6 : day - 1; // Monday start
-        d.setDate(d.getDate() - diff);
-        return d.toISOString().split('T')[0];
-    }
-
-    function getMonthKey(dateStr) {
-        return dateStr.slice(0, 7); // YYYY-MM
-    }
-
-    function computeStats(entries) {
-        const today = todayStr();
-        const thisWeekStart = getWeekStart(today);
-        const thisMonth = getMonthKey(today);
-
-        const todayEntry = entries.find(e => e.date === today);
-        const weekEntries = entries.filter(e => e.date >= thisWeekStart);
-        const monthEntries = entries.filter(e =>
-            getMonthKey(e.date) === thisMonth);
-
-        const totalPnl = entries.reduce((s, e) => s + e.pnl, 0);
-        const weekPnl = weekEntries.reduce((s, e) => s + e.pnl, 0);
-        const monthPnl = monthEntries.reduce((s, e) => s + e.pnl, 0);
-
-        const winDays = entries.filter(e => e.pnl > 0).length;
-        const totalDays = entries.length;
-        const avgDay = totalDays > 0 ? totalPnl / totalDays : 0;
-
-        // Avg per week: group by week, average
-        const weekMap = {};
-        entries.forEach(e => {
-            const ws = getWeekStart(e.date);
-            if (!weekMap[ws]) weekMap[ws] = 0;
-            weekMap[ws] += e.pnl;
-        });
-        const weeks = Object.values(weekMap);
-        const avgWeek = weeks.length > 0
-            ? weeks.reduce((s, v) => s + v, 0) / weeks.length : 0;
-
-        const best = entries.length > 0
-            ? Math.max(...entries.map(e => e.pnl)) : 0;
-
-        return {
-            today: todayEntry ? todayEntry.pnl : null,
-            week: weekPnl,
-            month: monthPnl,
-            total: totalPnl,
-            avgDay,
-            avgWeek,
-            winRate: totalDays > 0
-                ? Math.round((winDays / totalDays) * 100) : 0,
-            best,
-            totalDays,
-        };
+        // Kelly % = W - (1-W)/R
+        const kelly = winRate
+            - (1 - winRate) / wlRatio;
+        return Math.max(0,
+            Math.min(kelly * 100, 100));
     }
 
     // ============ FORMAT ============
     function fmt(val) {
-        if (val === null || val === undefined) return '--';
+        if (val === null || val === undefined)
+            return '--';
         const sign = val >= 0 ? '+' : '';
-        return sign + '$' + Math.abs(val).toFixed(2);
+        return sign + '$'
+            + Math.abs(val).toFixed(2);
     }
-
     function colorClass(val) {
-        if (val === null || val === undefined) return '';
+        if (val === null || val === undefined)
+            return '';
         return val >= 0 ? 'pos' : 'neg';
     }
+    function pnlClass(val) {
+        return val >= 0 ? 'pnl-pos' : 'pnl-neg';
+    }
+    function todayStr() {
+        return new Date().toISOString().split('T')[0];
+    }
 
-    // ============ RENDER ============
-    let cumChart = null;
-    let dailyChart = null;
-    let currentPeriod = 'all';
+    // ============ ADD TRADE ============
+    function addTrade() {
+        const asset = document.getElementById(
+            'entry-asset').value;
+        const date = document.getElementById(
+            'entry-date').value;
+        const pnlStr = document.getElementById(
+            'entry-pnl').value.replace(/,/g, '');
+        const result = document.getElementById(
+            'entry-result').value;
+        const notes = document.getElementById(
+            'entry-notes').value.trim();
 
-    function setPeriod(p) {
-        currentPeriod = p;
-        document.querySelectorAll('.period-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.period === p);
+        const pnl = parseFloat(pnlStr);
+        if (!date || !asset || isNaN(pnl)) return;
+
+        const trades = loadTrades();
+        trades.push({
+            id: Date.now() + '_'
+                + Math.random().toString(36).slice(2),
+            date, asset, pnl, result, notes,
         });
+        trades.sort((a, b) =>
+            a.date.localeCompare(b.date));
+        saveTrades(trades);
+        syncPush();
+
+        // Reset
+        document.getElementById('entry-pnl').value = '';
+        document.getElementById('entry-notes').value = '';
+        document.getElementById('entry-date').value
+            = todayStr();
+
         render();
     }
 
-    function switchTab(tab) {
-        document.querySelectorAll('.tab').forEach(t => {
-            t.classList.toggle('active', t.dataset.tab === tab);
-        });
-        ['log', 'weekly', 'monthly'].forEach(t => {
-            document.getElementById('tab-' + t).style.display =
-                t === tab ? '' : 'none';
-        });
+    function deleteTrade(id) {
+        const trades = loadTrades().filter(
+            t => t.id !== id);
+        saveTrades(trades);
+        syncPush();
+        render();
     }
 
+    // ============ ASSET MANAGEMENT ============
+    function showAddAsset() {
+        document.getElementById('add-asset-modal')
+            .classList.add('show');
+        document.getElementById('new-asset-name')
+            .focus();
+    }
+    function hideAddAsset() {
+        document.getElementById('add-asset-modal')
+            .classList.remove('show');
+    }
+    function addAsset() {
+        const name = document.getElementById(
+            'new-asset-name').value.trim().toUpperCase();
+        const capital = parseFloat(
+            document.getElementById(
+                'new-asset-capital').value) || 50;
+        const leverage = parseInt(
+            document.getElementById(
+                'new-asset-leverage').value) || 5;
+
+        if (!name) return;
+
+        const assets = loadAssets();
+        if (assets.find(a => a.name === name)) {
+            alert('Asset already exists');
+            return;
+        }
+        assets.push({
+            name, capital, leverage,
+            sl: 0.20, tp: 0.40
+        });
+        saveAssets(assets);
+        hideAddAsset();
+        document.getElementById(
+            'new-asset-name').value = '';
+        syncPush();
+        render();
+    }
+
+    function selectAsset(name) {
+        selectedAsset = name;
+        render();
+    }
+
+    // ============ SL/TP CONFIG ============
+    function updateSLTP() {
+        const assets = loadAssets();
+        const asset = assets.find(
+            a => a.name === selectedAsset);
+        if (!asset) return;
+
+        const sl = parseFloat(
+            document.getElementById('cfg-sl').value)
+            || 0.20;
+        const tp = parseFloat(
+            document.getElementById('cfg-tp').value)
+            || 0.40;
+
+        asset.sl = sl;
+        asset.tp = tp;
+        saveAssets(assets);
+
+        const pos = asset.capital * asset.leverage;
+        const slDollar = pos * (sl / 100);
+        const tpDollar = pos * (tp / 100);
+        const rr = tp / sl;
+
+        document.getElementById('cfg-sl-dollar')
+            .textContent = '= -$'
+            + slDollar.toFixed(2);
+        document.getElementById('cfg-tp-dollar')
+            .textContent = '= +$'
+            + tpDollar.toFixed(2);
+        document.getElementById('cfg-rr')
+            .textContent = '1 : ' + rr.toFixed(1);
+    }
+
+    // ============ RENDER ============
     function render() {
-        const entries = load();
-        const stats = computeStats(entries);
+        const trades = loadTrades();
+        const assets = loadAssets();
+        const today = todayStr();
 
-        // Stats
-        const setS = (id, val) => {
-            const el = document.getElementById(id);
-            el.textContent = fmt(val);
-            el.className = 'value ' + colorClass(val);
-        };
-        setS('stat-today', stats.today);
-        setS('stat-week', stats.week);
-        setS('stat-month', stats.month);
-        setS('stat-total', stats.total);
-        setS('stat-avg-day', stats.avgDay);
-        setS('stat-avg-week', stats.avgWeek);
-        setS('stat-best', stats.best);
+        // Overall stats
+        const totalPnl = trades.reduce(
+            (s, t) => s + t.pnl, 0);
+        const todayPnl = trades
+            .filter(t => t.date === today)
+            .reduce((s, t) => s + t.pnl, 0);
+        const wins = trades.filter(
+            t => t.pnl > 0).length;
+        const winRate = trades.length > 0
+            ? Math.round(
+                (wins / trades.length) * 100)
+            : 0;
 
-        const winEl = document.getElementById('stat-win-days');
-        winEl.textContent = stats.totalDays > 0
-            ? stats.winRate + '%' : '--';
-        winEl.className = 'value ' +
-            (stats.winRate >= 50 ? 'pos' : stats.winRate > 0 ? 'neg' : '');
+        const oTotal = document.getElementById(
+            'o-total');
+        oTotal.textContent = fmt(totalPnl);
+        oTotal.className = 'o-value '
+            + colorClass(totalPnl);
 
-        // Log table
-        renderLog(entries);
-        renderWeekly(entries);
-        renderMonthly(entries);
-        renderCharts(entries);
+        const oToday = document.getElementById(
+            'o-today');
+        oToday.textContent = trades.some(
+            t => t.date === today)
+            ? fmt(todayPnl) : '--';
+        oToday.className = 'o-value '
+            + colorClass(todayPnl);
+
+        const oWr = document.getElementById(
+            'o-winrate');
+        oWr.textContent = trades.length > 0
+            ? winRate + '%' : '--';
+        oWr.className = 'o-value '
+            + (winRate >= 50 ? 'pos'
+                : trades.length > 0 ? 'neg' : '');
+
+        document.getElementById('o-trades')
+            .textContent = trades.length || '--';
+
+        // Asset cards
+        renderAssetCards(trades, assets);
+
+        // SL/TP config for selected asset
+        renderConfig(assets);
+
+        // Asset dropdown in form
+        renderAssetDropdown(assets);
+
+        // Trade log
+        renderLog(trades);
+
+        // Charts
+        renderCharts(trades);
     }
 
-    function renderLog(entries) {
-        const body = document.getElementById('log-body');
-        const empty = document.getElementById('log-empty');
+    function renderAssetCards(trades, assets) {
+        const container = document.getElementById(
+            'asset-cards');
+        container.innerHTML = assets.map(asset => {
+            const at = trades.filter(
+                t => t.asset === asset.name);
+            const pnl = at.reduce(
+                (s, t) => s + t.pnl, 0);
+            const wins = at.filter(
+                t => t.pnl > 0).length;
+            const wr = at.length > 0
+                ? Math.round(
+                    (wins / at.length) * 100) : 0;
+            const kelly = calcKelly(at);
+            const pos = asset.capital
+                * asset.leverage;
+            const roi = asset.capital > 0
+                ? ((pnl / asset.capital) * 100)
+                    .toFixed(1) : 0;
+            const active = asset.name === selectedAsset
+                ? 'active' : '';
 
-        if (entries.length === 0) {
+            return `
+            <div class="asset-card ${active}"
+              onclick="selectAsset('${asset.name}')">
+                <div class="asset-card-header">
+                    <span class="asset-name">
+                        ${asset.name}</span>
+                    <span class="asset-pnl ${pnlClass(pnl)}">
+                        ${fmt(pnl)}</span>
+                </div>
+                <div class="asset-meta">
+                    <div class="am-item">
+                        <div class="am-label">Trades</div>
+                        <div class="am-value">
+                            ${at.length}</div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">Win Rate</div>
+                        <div class="am-value">
+                            ${at.length > 0
+                                ? wr + '%' : '--'}
+                        </div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">ROI</div>
+                        <div class="am-value ${pnlClass(pnl)}">
+                            ${at.length > 0
+                                ? roi + '%' : '--'}
+                        </div>
+                    </div>
+                    <div class="am-item">
+                        <div class="am-label">Kelly</div>
+                        <div class="am-value">
+                            ${kelly !== null
+                                ? '<span class="kelly-badge">'
+                                    + kelly.toFixed(1)
+                                    + '%</span>'
+                                : '<span style="color:var(--text-dim);font-size:0.6rem;">5+ trades</span>'}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderConfig(assets) {
+        const asset = assets.find(
+            a => a.name === selectedAsset);
+        if (!asset) return;
+
+        document.getElementById('config-asset-name')
+            .textContent = asset.name;
+        document.getElementById('cfg-sl')
+            .value = asset.sl.toFixed(2);
+        document.getElementById('cfg-tp')
+            .value = asset.tp.toFixed(2);
+
+        const pos = asset.capital * asset.leverage;
+        const slD = pos * (asset.sl / 100);
+        const tpD = pos * (asset.tp / 100);
+        const rr = asset.tp / asset.sl;
+
+        document.getElementById('cfg-sl-dollar')
+            .textContent = '= -$' + slD.toFixed(2);
+        document.getElementById('cfg-tp-dollar')
+            .textContent = '= +$' + tpD.toFixed(2);
+        document.getElementById('cfg-rr')
+            .textContent = '1 : ' + rr.toFixed(1);
+    }
+
+    function renderAssetDropdown(assets) {
+        const sel = document.getElementById(
+            'entry-asset');
+        const current = sel.value;
+        sel.innerHTML = assets.map(a =>
+            `<option value="${a.name}"
+              ${a.name === selectedAsset
+                  ? 'selected' : ''}>
+              ${a.name}</option>`
+        ).join('');
+        if (current && assets.find(
+            a => a.name === current)) {
+            sel.value = current;
+        }
+    }
+
+    function renderLog(trades) {
+        const body = document.getElementById(
+            'log-body');
+        const empty = document.getElementById(
+            'log-empty');
+
+        if (trades.length === 0) {
             body.innerHTML = '';
             empty.style.display = '';
             return;
         }
         empty.style.display = 'none';
 
-        // Show newest first
-        const sorted = [...entries].reverse();
-        body.innerHTML = sorted.map(e => {
-            const cls = e.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-            const dateDisplay = new Date(e.date + 'T12:00:00')
+        const sorted = [...trades].reverse();
+        body.innerHTML = sorted.map(t => {
+            const dateDisplay = new Date(
+                t.date + 'T12:00:00')
                 .toLocaleDateString('en-US',
                     { month: 'short', day: 'numeric' });
+            const resultLabel = t.result === 'tp'
+                ? 'TP' : t.result === 'sl'
+                ? 'SL' : 'Manual';
+
             return `<tr>
                 <td>${dateDisplay}</td>
-                <td class="${cls}">${fmt(e.pnl)}</td>
-                <td>${e.trades || '-'}</td>
-                <td class="note-cell" title="${(e.notes||'').replace(/"/g,'&quot;')}">${e.notes || ''}</td>
-                <td><button class="delete-btn" onclick="deleteEntry('${e.date}')">x</button></td>
+                <td><span class="asset-tag">
+                    ${t.asset}</span></td>
+                <td class="${pnlClass(t.pnl)}">
+                    ${fmt(t.pnl)}</td>
+                <td>${resultLabel}</td>
+                <td class="note-cell"
+                  title="${(t.notes || '')
+                    .replace(/"/g, '&quot;')}">
+                    ${t.notes || ''}</td>
+                <td><button class="delete-btn"
+                  onclick="deleteTrade('${t.id}')">
+                  x</button></td>
             </tr>`;
         }).join('');
     }
 
-    function renderWeekly(entries) {
-        const weekMap = {};
-        entries.forEach(e => {
-            const ws = getWeekStart(e.date);
-            if (!weekMap[ws]) weekMap[ws] = { pnl: 0, days: 0 };
-            weekMap[ws].pnl += e.pnl;
-            weekMap[ws].days++;
-        });
-
-        const weeks = Object.entries(weekMap)
-            .sort((a, b) => b[0].localeCompare(a[0]));
-
-        document.getElementById('weekly-body').innerHTML =
-            weeks.map(([ws, d]) => {
-                const cls = d.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-                const label = new Date(ws + 'T12:00:00')
-                    .toLocaleDateString('en-US',
-                        { month: 'short', day: 'numeric' });
-                const avg = d.pnl / d.days;
-                return `<tr>
-                    <td>${label}</td>
-                    <td class="${cls}">${fmt(d.pnl)}</td>
-                    <td>${d.days}</td>
-                    <td class="${colorClass(avg)}">${fmt(avg)}</td>
-                </tr>`;
-            }).join('');
-    }
-
-    function renderMonthly(entries) {
-        const monthMap = {};
-        entries.forEach(e => {
-            const mk = getMonthKey(e.date);
-            if (!monthMap[mk]) monthMap[mk] = { pnl: 0, days: 0 };
-            monthMap[mk].pnl += e.pnl;
-            monthMap[mk].days++;
-        });
-
-        const months = Object.entries(monthMap)
-            .sort((a, b) => b[0].localeCompare(a[0]));
-
-        document.getElementById('monthly-body').innerHTML =
-            months.map(([mk, d]) => {
-                const cls = d.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-                const [y, m] = mk.split('-');
-                const label = new Date(+y, +m - 1)
-                    .toLocaleDateString('en-US',
-                        { month: 'long', year: 'numeric' });
-                const avg = d.pnl / d.days;
-                return `<tr>
-                    <td>${label}</td>
-                    <td class="${cls}">${fmt(d.pnl)}</td>
-                    <td>${d.days}</td>
-                    <td class="${colorClass(avg)}">${fmt(avg)}</td>
-                </tr>`;
-            }).join('');
-    }
-
     // ============ CHARTS ============
-    function filterByPeriod(entries) {
-        if (currentPeriod === 'all') return entries;
+    function setPeriod(p) {
+        currentPeriod = p;
+        document.querySelectorAll('.period-btn')
+            .forEach(b => {
+                b.classList.toggle('active',
+                    b.dataset.period === p);
+            });
+        render();
+    }
+
+    function filterByPeriod(trades) {
+        if (currentPeriod === 'all') return trades;
         const days = parseInt(currentPeriod);
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - days);
-        const cutStr = cutoff.toISOString().split('T')[0];
-        return entries.filter(e => e.date >= cutStr);
+        const cutStr = cutoff.toISOString()
+            .split('T')[0];
+        return trades.filter(t => t.date >= cutStr);
     }
 
-    function renderCharts(entries) {
-        const filtered = filterByPeriod(entries);
+    function renderCharts(trades) {
+        const filtered = filterByPeriod(trades);
 
-        // Cumulative chart
-        const cumLabels = filtered.map(e => {
-            const d = new Date(e.date + 'T12:00:00');
-            return d.toLocaleDateString('en-US',
+        // Group by date for charts
+        const dayMap = {};
+        filtered.forEach(t => {
+            if (!dayMap[t.date]) dayMap[t.date] = 0;
+            dayMap[t.date] += t.pnl;
+        });
+        const days = Object.entries(dayMap)
+            .sort((a, b) => a[0].localeCompare(b[0]));
+
+        // Cumulative
+        const cumLabels = days.map(([d]) => {
+            const dt = new Date(d + 'T12:00:00');
+            return dt.toLocaleDateString('en-US',
                 { month: 'short', day: 'numeric' });
         });
         let cum = 0;
-        const cumData = filtered.map(e => {
-            cum += e.pnl;
+        const cumData = days.map(([, pnl]) => {
+            cum += pnl;
             return parseFloat(cum.toFixed(2));
         });
 
-        const cumCtx = document.getElementById('cumChart');
+        const cumCtx = document.getElementById(
+            'cumChart');
         if (cumChart) cumChart.destroy();
         cumChart = new Chart(cumCtx, {
             type: 'line',
@@ -898,10 +1304,12 @@
                 datasets: [{
                     data: cumData,
                     borderColor: '#f0c850',
-                    backgroundColor: 'rgba(240,200,80,0.15)',
+                    backgroundColor:
+                        'rgba(240,200,80,0.15)',
                     fill: true,
                     tension: 0.3,
-                    pointRadius: filtered.length > 30 ? 0 : 3,
+                    pointRadius:
+                        days.length > 30 ? 0 : 3,
                     pointBackgroundColor: '#f0c850',
                     borderWidth: 2,
                 }]
@@ -913,7 +1321,8 @@
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: ctx => fmt(ctx.parsed.y)
+                            label: ctx =>
+                                fmt(ctx.parsed.y)
                         }
                     }
                 },
@@ -921,34 +1330,51 @@
                     x: {
                         ticks: {
                             color: '#a09070',
-                            font: { family: 'Playfair Display', size: 10 },
+                            font: {
+                                family:
+                                    'Playfair Display',
+                                size: 10
+                            },
                             maxTicksLimit: 8,
                         },
-                        grid: { color: 'rgba(218,175,60,0.12)' },
+                        grid: {
+                            color:
+                                'rgba(218,175,60,0.12)'
+                        },
                     },
                     y: {
                         ticks: {
                             color: '#a09070',
-                            font: { family: 'Playfair Display', size: 10 },
+                            font: {
+                                family:
+                                    'Playfair Display',
+                                size: 10
+                            },
                             callback: v => '$' + v,
                         },
-                        grid: { color: 'rgba(218,175,60,0.12)' },
+                        grid: {
+                            color:
+                                'rgba(218,175,60,0.12)'
+                        },
                     }
                 }
             }
         });
 
-        // Daily bar chart
-        const dailyLabels = filtered.map(e => {
-            const d = new Date(e.date + 'T12:00:00');
-            return d.toLocaleDateString('en-US',
+        // Daily bar
+        const dailyLabels = days.map(([d]) => {
+            const dt = new Date(d + 'T12:00:00');
+            return dt.toLocaleDateString('en-US',
                 { month: 'short', day: 'numeric' });
         });
-        const dailyData = filtered.map(e => e.pnl);
-        const dailyColors = filtered.map(e =>
-            e.pnl >= 0 ? 'rgba(112,216,96,0.8)' : 'rgba(255,85,85,0.8)');
+        const dailyData = days.map(([, pnl]) => pnl);
+        const dailyColors = days.map(([, pnl]) =>
+            pnl >= 0
+                ? 'rgba(112,216,96,0.8)'
+                : 'rgba(255,85,85,0.8)');
 
-        const dailyCtx = document.getElementById('dailyChart');
+        const dailyCtx = document.getElementById(
+            'dailyChart');
         if (dailyChart) dailyChart.destroy();
         dailyChart = new Chart(dailyCtx, {
             type: 'bar',
@@ -967,7 +1393,8 @@
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: ctx => fmt(ctx.parsed.y)
+                            label: ctx =>
+                                fmt(ctx.parsed.y)
                         }
                     }
                 },
@@ -975,7 +1402,11 @@
                     x: {
                         ticks: {
                             color: '#a09070',
-                            font: { family: 'Playfair Display', size: 10 },
+                            font: {
+                                family:
+                                    'Playfair Display',
+                                size: 10
+                            },
                             maxTicksLimit: 8,
                         },
                         grid: { display: false },
@@ -983,10 +1414,17 @@
                     y: {
                         ticks: {
                             color: '#a09070',
-                            font: { family: 'Playfair Display', size: 10 },
+                            font: {
+                                family:
+                                    'Playfair Display',
+                                size: 10
+                            },
                             callback: v => '$' + v,
                         },
-                        grid: { color: 'rgba(218,175,60,0.12)' },
+                        grid: {
+                            color:
+                                'rgba(218,175,60,0.12)'
+                        },
                     }
                 }
             }
@@ -995,13 +1433,17 @@
 
     // ============ EXPORT / IMPORT ============
     function exportData() {
-        const entries = load();
+        const data = {
+            trades: loadTrades(),
+            assets: loadAssets(),
+        };
         const blob = new Blob(
-            [JSON.stringify(entries, null, 2)],
+            [JSON.stringify(data, null, 2)],
             { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'scalp-journal-' + todayStr() + '.json';
+        a.download = 'scalp-tracker-'
+            + todayStr() + '.json';
         a.click();
     }
 
@@ -1015,13 +1457,18 @@
             const reader = new FileReader();
             reader.onload = ev => {
                 try {
-                    const data = JSON.parse(ev.target.result);
-                    if (Array.isArray(data)) {
-                        save(data.sort((a,b) =>
-                            a.date.localeCompare(b.date)));
-                        render();
+                    const data = JSON.parse(
+                        ev.target.result);
+                    if (data.trades) {
+                        saveTrades(data.trades);
                     }
-                } catch { alert('Invalid JSON file'); }
+                    if (data.assets) {
+                        saveAssets(data.assets);
+                    }
+                    render();
+                } catch {
+                    alert('Invalid JSON file');
+                }
             };
             reader.readAsText(file);
         };
@@ -1029,21 +1476,36 @@
     }
 
     function clearAll() {
-        if (!confirm('Delete all entries? This cannot be undone.'))
+        if (!confirm(
+            'Delete all trades? Cannot be undone.'))
             return;
-        save([]);
-        fireGet(SYNC_URL + '?action=scalp_save&data=' + encodeURIComponent('[]'));
+        saveTrades([]);
+        syncPush();
         render();
     }
 
+    // ============ EVENT LISTENERS ============
+    document.getElementById('cfg-sl')
+        .addEventListener('input', updateSLTP);
+    document.getElementById('cfg-tp')
+        .addEventListener('input', updateSLTP);
+
+    // Close modal on overlay click
+    document.getElementById('add-asset-modal')
+        .addEventListener('click', function(e) {
+            if (e.target === this) hideAddAsset();
+        });
+
     // ============ INIT ============
-    document.getElementById('entry-date').value = todayStr();
+    migrateV1();
+    document.getElementById('entry-date').value
+        = todayStr();
     render();
     syncFromSheet();
 
-    // Register service worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js');
+        navigator.serviceWorker.register(
+            './service-worker.js');
     }
     </script>
 </body>
