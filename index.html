@@ -934,15 +934,16 @@
                 position: cap * asset.leverage,
             };
         }
-        // Half-Kelly for safety
+        // Half-Kelly on position size
         const halfKelly = kelly / 2;
-        const riskCap = cap * (halfKelly / 100);
+        const position = cap * asset.leverage;
+        const riskCap = position * (halfKelly / 100);
         return {
             capital: cap,
             kelly: kelly,
             halfKelly: halfKelly,
             riskCapital: riskCap,
-            position: riskCap * asset.leverage,
+            position: position,
         };
     }
 
